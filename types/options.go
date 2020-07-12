@@ -2,6 +2,10 @@ package types
 
 import (
 	"bytes"
+<<<<<<< HEAD
+	"io"
+=======
+>>>>>>> 94b8f94f58536e284d2c4a4eefd848b2090b7fa6
 	"sync"
 )
 
@@ -30,7 +34,7 @@ type DeployOptions struct {
 	Labels       map[string]string        // Labels for containers
 	NodeLabels   map[string]string        // NodeLabels for filter node
 	DeployMethod string                   // Deploy method
-	Data         map[string]*bytes.Reader // For additional file data
+	Data         map[string]ReaderManager // For additional file data
 	SoftLimit    bool                     // Soft limit memory
 	NodesLimit   int                      // Limit nodes count
 	ProcessIdent string                   // ProcessIdent ident this deploy
@@ -40,6 +44,31 @@ type DeployOptions struct {
 	Lambda       bool                     // indicate is lambda container or not
 
 	Mux sync.Mutex // used for concurrent send during creation
+}
+
+// ReaderManager return Reader under concurrency
+type ReaderManager interface {
+	GetReader() io.Reader
+}
+
+type readerManager struct {
+	mux sync.Mutex
+	r   io.Reader
+}
+
+func (rm *readerManager) GetReader() io.Reader {
+	rm.mux.Lock()
+	defer rm.mux.Unlock()
+	buf := &bytes.Buffer{}
+	tee := io.TeeReader(rm.r, buf)
+	rm.r = tee
+	return buf
+}
+
+func NewReaderManager(r io.Reader) ReaderManager {
+	return &readerManager{
+		r: r,
+	}
 }
 
 // Normalize keeps deploy options consistant

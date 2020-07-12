@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"sync"
 
 	"github.com/projecteru2/core/store"
@@ -121,11 +120,7 @@ func (c *Calcium) doReplaceContainer(
 		if err != nil {
 			return nil, removeMessage, err
 		}
-		bs, err := ioutil.ReadAll(stream)
-		if err != nil {
-			return nil, removeMessage, err
-		}
-		opts.DeployOptions.Data[dst] = bytes.NewReader(bs)
+		opts.DeployOptions.Data[dst] = types.NewReaderManager(stream)
 	}
 
 	createMessage := &types.CreateContainerMessage{}

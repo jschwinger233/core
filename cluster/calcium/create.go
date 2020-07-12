@@ -3,7 +3,6 @@ package calcium
 import (
 	"context"
 	"fmt"
-	"io"
 	"sync"
 
 	"github.com/projecteru2/core/cluster"
@@ -224,6 +223,10 @@ func (c *Calcium) doCreateAndStartContainer(
 
 			// Copy data to container
 			if len(opts.Data) > 0 {
+<<<<<<< HEAD
+				for dst, readerManager := range opts.Data {
+					if err = c.doSendFileToContainer(ctx, node.Engine, container.ID, dst, readerManager.GetReader(), true, true); err != nil {
+=======
 				for dst, src := range opts.Data {
 					mutexSend := func() error {
 						opts.Mux.Lock()
@@ -234,6 +237,7 @@ func (c *Calcium) doCreateAndStartContainer(
 						return c.doSendFileToContainer(ctx, node.Engine, container.ID, dst, src, true, true)
 					}
 					if err = mutexSend(); err != nil {
+>>>>>>> 94b8f94f58536e284d2c4a4eefd848b2090b7fa6
 						return err
 					}
 				}

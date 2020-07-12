@@ -262,9 +262,9 @@ func toCoreDeployOptions(d *pb.DeployOptions) (*types.DeployOptions, error) {
 		return nil, err
 	}
 
-	data := map[string]*bytes.Reader{}
+	data := map[string]types.ReaderManager{}
 	for filename, bs := range d.Data {
-		data[filename] = bytes.NewReader(bs)
+		data[filename] = types.NewReaderManager(bytes.NewBuffer(bs))
 	}
 
 	return &types.DeployOptions{
