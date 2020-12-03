@@ -18,7 +18,7 @@ type ResourceRequest interface {
 }
 
 // SchedulerV2 .
-type SchedulerV2 func([]types.NodeInfo) (ResourcePlans, int, error)
+type SchedulerV2 func([]ScheduleInfo) (ResourcePlans, int, error)
 
 // DispenseOptions .
 type DispenseOptions struct {
@@ -34,4 +34,19 @@ type ResourcePlans interface {
 	ApplyChangesOnNode(*types.Node, ...int)
 	RollbackChangesOnNode(*types.Node, ...int)
 	Dispense(DispenseOptions, *types.ResourceMeta) (*types.ResourceMeta, error)
+}
+
+type ScheduleInfo struct {
+	Name          string
+	CPUMap        types.CPUMap
+	VolumeMap     types.VolumeMap
+	InitVolumeMap types.VolumeMap
+	NUMA          types.NUMA
+	NUMAMemory    types.NUMAMemory
+	MemCap        int64
+	StorageCap    int64
+
+	CPUPlan     []types.CPUMap
+	VolumePlans []types.VolumePlan // {{"AUTO:/data:rw:1024": "/mnt0:/data:rw:1024"}}
+	Capacity    int
 }

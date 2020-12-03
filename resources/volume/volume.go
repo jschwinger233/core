@@ -75,7 +75,7 @@ func (v *volumeRequest) Validate() error {
 
 // MakeScheduler .
 func (v volumeRequest) MakeScheduler() resourcetypes.SchedulerV2 {
-	return func(nodesInfo []types.NodeInfo) (plans resourcetypes.ResourcePlans, total int, err error) {
+	return func(scheduleInfos []resourcetypes.ScheduleInfo) (plans resourcetypes.ResourcePlans, total int, err error) {
 		schedulerV1, err := scheduler.GetSchedulerV1()
 		if err != nil {
 			return
@@ -87,9 +87,9 @@ func (v volumeRequest) MakeScheduler() resourcetypes.SchedulerV2 {
 			limit = append(limit, &v.limit[i])
 		}
 
-		nodesInfo, volumePlans, total, err := schedulerV1.SelectVolumeNodes(nodesInfo, request)
+		scheduleInfos, volumePlans, total, err := schedulerV1.SelectVolumeNodes(scheduleInfos, request)
 		return ResourcePlans{
-			capacity: utils.GetCapacity(nodesInfo),
+			capacity: utils.GetCapacity(scheduleInfos),
 			request:  request,
 			limit:    limit,
 			plan:     volumePlans,

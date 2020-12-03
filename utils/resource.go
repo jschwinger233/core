@@ -1,12 +1,12 @@
 package utils
 
-import "github.com/projecteru2/core/types"
+import resourcetypes "github.com/projecteru2/core/resources/types"
 
 // GetCapacity .
-func GetCapacity(nodesInfo []types.NodeInfo) map[string]int {
+func GetCapacity(scheduleInfos []resourcetypes.ScheduleInfo) map[string]int {
 	capacity := make(map[string]int)
-	for _, nodeInfo := range nodesInfo {
-		capacity[nodeInfo.Name] = nodeInfo.Capacity
+	for _, scheduleInfo := range scheduleInfos {
+		capacity[scheduleInfo.Name] = scheduleInfo.Capacity
 	}
 	return capacity
 }

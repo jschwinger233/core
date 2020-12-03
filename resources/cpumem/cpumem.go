@@ -68,7 +68,7 @@ func (cm *cpuMemRequest) Validate() error {
 
 // MakeScheduler .
 func (cm cpuMemRequest) MakeScheduler() resourcetypes.SchedulerV2 {
-	return func(nodesInfo []types.NodeInfo) (plans resourcetypes.ResourcePlans, total int, err error) {
+	return func(scheduleInfos []resourcetypes.ScheduleInfo) (plans resourcetypes.ResourcePlans, total int, err error) {
 		schedulerV1, err := scheduler.GetSchedulerV1()
 		if err != nil {
 			return
@@ -76,9 +76,9 @@ func (cm cpuMemRequest) MakeScheduler() resourcetypes.SchedulerV2 {
 
 		var CPUPlans map[string][]types.CPUMap
 		if !cm.CPUBind || cm.CPUQuotaRequest == 0 {
-			nodesInfo, total, err = schedulerV1.SelectMemoryNodes(nodesInfo, cm.CPUQuotaRequest, cm.memoryRequest)
+			scheduleInfos, total, err = schedulerV1.SelectMemoryNodes(scheduleInfos, cm.CPUQuotaRequest, cm.memoryRequest)
 		} else {
-			nodesInfo, CPUPlans, total, err = schedulerV1.SelectCPUNodes(nodesInfo, cm.CPUQuotaRequest, cm.memoryRequest)
+			scheduleInfos, CPUPlans, total, err = schedulerV1.SelectCPUNodes(scheduleInfos, cm.CPUQuotaRequest, cm.memoryRequest)
 		}
 		return ResourcePlans{
 			memoryRequest:   cm.memoryRequest,
@@ -86,7 +86,7 @@ func (cm cpuMemRequest) MakeScheduler() resourcetypes.SchedulerV2 {
 			CPUQuotaRequest: cm.CPUQuotaRequest,
 			CPUQuotaLimit:   cm.CPUQuotaLimit,
 			CPUPlans:        CPUPlans,
-			capacity:        utils.GetCapacity(nodesInfo),
+			capacity:        utils.GetCapacity(scheduleInfos),
 		}, total, err
 	}
 }
